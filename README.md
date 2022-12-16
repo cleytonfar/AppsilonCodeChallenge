@@ -1,138 +1,131 @@
-# PoC Ciclo de Mobilidade e Turismo e Lazer
+# @Appsilon Code Challenge
 
-![Figura 1: Tela inicial Ciclo de Mobilidade](www/screen0.png)
-![Figura 2: Tela inicial Ciclo de Turismo e Lazer](www/screen00.png)
+![Figure 1: ](www/screen0.png)
 
-## Tabela de Conteúdo:
+
+## Table of Content:
+---
+- [Overview](#overview)
+- [User's Guide](#user-guide)
+- [Developer's Guide](#developer-guide)
+- [Author](#author)
+
+## Overview <a name="overview"></a>
 ---
 
-- [Descrição](#descricao)
-- [Guia do usuário](#guia-do-usuario)
-- [Guia de instalação](#guia-de-instalacao)
-- [Autores](#autores)
-- [Licença](#licenca)
+This is a Shiny app which allow users to visualize selected species on the map, as well as the timeline when the species were observed. This application was built using data from the [Global Biodiversity Information Facility](https://www.gbif.org/occurrence/search?dataset_key=8a863029-f435-446a-821e-275f4f641165), an international effort aimed at providing anyone, anywhere, open access to data about all types of life on Earth.
 
-## Descrição <a name="descricao"></a>
+### Main tasks
+        
+- To visualize selected species observations on the map and how often it is observed;
+- To view a visualization of a timeline when selected species were observed.	
+
+## User's Guide <a name="user-guide"> </a>
 ---
 
-Para contribuir para o debate sobre política de mobilidade e turismo da cidade do Refice foi uma aplicação que apresenta duas soluções sobre os temas. 
+Once the application starts, users visualize informations for all species observed in **Poland**. Specifically, I choose to demonstrate the frequency of observations of all species found in the country, as well as the frequency of these observation through the years. 
 
-## PoC Ciclo de Mobilidade
+![Figure 2: ](www/screen1.png)
 
-O trânsito da cidade do Recife foi identificado como o pior do Brasil e um dos 15 piores do mundo. Recife é a capital brasileira que mais teve congestionamentos no ano de 2021.  Alguns projetos vêm sendo desenvolvidos pela prefeitura em busca de soluções para mitigar esse problema, como por exemplo a expansão da malha cicloviária da cidade. Atualmente a cidade do Recife possui o Plano Diretor Cicloviário, um plano que define as diretrizes de implementação da expansão da malha cicloviária na cidade e região metropolitana. 
+The user has the option to search for a specific species using the section called **Looking for a particualr Species?**. By clicking on the plus sign, the user can search for a specific species using the species' **vernacular name** or **scientific name**:
 
-A PoC Ciclo de Mobilidade utiliza o conjunto de dados **Strava Metro**, informações públicas como **OpenStreetMap** e conjunto de dados sobre a **malha cicloviária** da cidade do Recife para construir uma solução para complementar as informações do Plano Diretor Cicloviário e auxiliar no debate acerca da mobilidade na cidade do Recife. Utilizando esses conjuntos de dados é possível construir diversos indicadores, tais como:
+![Figure 3: ](www/screen2.png)
 
-- Nível de cobertura por malha cicloviária das vias com tráfego;
-- Nível de cobertura por malha cicloviária por nível de tráfego;
-- Lista de  ruas/avenidas com tráfego alto e não cobertas por malha cicloviária.
+The application provides information about **where** the species were observed on the map and an interactive plot showing the **frequency** of observations through time. 
+The map displays two kind of information:
 
+1. It provides the location of each observation in the territory;
+2. It provides the frequency of species in the territory by clustering the observations by area;
 
-## PoC Ciclo de Turismo e Lazer
+In addition, the user can inspect information about one specific observation by clicling on the markers on the map. A popup will open with details about the species observerd:
 
-Também utilizando o conjunto de dados do **Strava Metro** como fonte de dados primária, essa solução tem como objetivo analisar como a malha cicloviária operacional complementa a malha cicloviária permanente com o intuito de fornecer maior extensão de trechos cicláveis para a população durante os Domingos e Feriados. 
-Os principais objetivos dessa solução são:
-
-- Contabilizar pontos de interseções entre a malha permanente e operacional;
-- Auxiliar a Secretaria de Turismos a formular a implementação da malha cicloviária operacionais para que conecte os principais pontos turísticos da cidade.
-
-Assim como na PoC de Ciclo de Mobilidade, foram utilizados os seguintes conjunto de dados:
-
-- **Strava Metro**: banco de dados com informações autorreportadas dos trajetos de bicicleta dos usuários do aplicativo Strava para o ano de 2021;
-- **Malha Cicloviária Permanente e Operacional**: conjunto de arquivos shape indicando a localização da malha cicloviária da cidade do Recife (ano de 2022);
-- **Estações Bike PE**: conjunto de dados com a localização das estações de bicicletas compartilhadas.
-- **Informações sobre Pontos Turísticos da cidade do Recife**: informações sobre alguns pontos turísticos georeferenciados da cidade do Recife;
-OpenStreetMap: banco de dados de mapas, colaborativo e gratuito.
+![Figure 4: ](www/screen3.png)
 
 
-## Guia do Usuário <a name="guia-do-usuario"> </a>
+
+## Developer's Guide  <a name="developer-guide"> </a>
 ---
 
-A tela inicial da aplicação mostra a solução de **ciclo de mobilidade**. O primeiro conjunto de informações apresentados são os índices de cobertura da malha cicloviária sobre os trechos cicláveis.
-Os índices são divididos por nível de tráfego nos trechos e categorizados por:
+The application logic is very simple. The shiny apps are structured using modules. These modules are very useful to decompose independent functionalities and isolate the development of specific components of the app. The logic is as follows:
 
-1. **% total sem cobertura**;
-2. Quanto do **% total sem cobertura** possui previsão do Plano Diretor Cicloviário (C/ PDC);
-3. Quanto do **% total sem cobertura** ainda sem previsão do Plano Diretor Cicloviário (S/ PDC).
+1. The user will provide a **species name** to the app (vernacular or scientific name);
+2. **Species name** is then passed to a module called `speciesDataset`, which will filter the data and return the result to other modules in the application;
+3. **Filtered data** and **species name** are passed to the modules responsible to create the map and timeline information;
+4. Finally, the results are showed back to the user.
 
-Como demonstrado na Figura 4, é possível escolher a variável utilizada para fazer toda a análise. 
+The following figure summarizes the application's flow:
 
-![Figura 4: Ciclo de Mobilidade](www/screen1.png)
+[![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggVEJcbkFbVXNlcl0gLS0-fHNwZWNpZXMgbmFtZXwgQihzcGVjaWVzRGF0YXNldCBtb2R1bGUpXG5CIC0tPiAgQyhtYXBGcmVxdWVuY3kgbW9kdWxlKVxuQiAtLT4gIEQodGltZWxpbmUgbW9kdWxlKVxuQyAtLT4gRShpbmZvcm1hdGlvbiBtYXApXG5EIC0tPiBGKHRpbWVsaW5lIHBsb3QpXG5cblxuIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)](https://mermaid-js.github.io/docs/mermaid-live-editor-beta/#/edit/eyJjb2RlIjoiZ3JhcGggVEJcbkFbVXNlcl0gLS0-fHNwZWNpZXMgbmFtZXwgQihzcGVjaWVzRGF0YXNldCBtb2R1bGUpXG5CIC0tPiAgQyhtYXBGcmVxdWVuY3kgbW9kdWxlKVxuQiAtLT4gIEQodGltZWxpbmUgbW9kdWxlKVxuQyAtLT4gRShpbmZvcm1hdGlvbiBtYXApXG5EIC0tPiBGKHRpbWVsaW5lIHBsb3QpXG5cblxuIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)
 
-O segundo conjunto de informações demonstrados são os rankings da ruas sem cobertura agrupados por nível de tráfego. As ruas são ordenadas em forma decrescente a partir do volume de tráfego. Assim como anteriormente, é possível observar o ranking das ruas que possuem previsão do PDC e sem previsão do PDC.
-
-![Figura 5: Ciclo de Mobilidade](www/screen2.png)
-
-A seguir, é demonstrado o mapa da cidade do Recife com todo o tráfego reportado (categorizado por nível de tráfego), assim como a malha cicloviária e o Plano Diretor Cicloviário. É possível selecionar quais *layer* observar no mapa. 
-
-![Figura 6: Ciclo de Mobilidade](www/screen3.png)
-
-A seção **Ciclo de Turismo e Lazer** da aplicação demonstra a solução desenvolvida para esse tema. 
-O principal objetivo dessa solução é contabilizar pontos de interseções entre a malha permanente e operacional e auxiliar a Secretaria de Turismos a formular a implementação da malha cicloviária operacionais para que conecte os principais pontos turísticos da cidade.
-
-![Figura 7: Ciclo de Turismo e Lazer](www/screen01.png)
-
-Semelhante ao mapa demonstrado na solução de Ciclo de Mobilidade, a Figura 7 mostra a funcionalidade do mapa, no qual é possível observar as malhas permanentes e operacionais, sua interseção, e como elas conectam os principais pontos turísticos da cidade do Recife. 
-
-Por fim, há uma seção de **Upload** de arquivos no qual a prefeitura do Recife pode realizar as atualizações de toda a aplicação com o carregamento de novas versões dos arquivos.
-
-![Figura 8: Upload](www/screen4.png)
-
-## Guia de Implementação  <a name="guia-do-implementacao"> </a>
----
-A implementação da aplicaçãoé bastante simples e seguirá três passos simples. São eles:
-
-1. Download do software R e as bibliotecas necessárias;
-2. Download dos códigos-fonte da aplicação;
-3. Execução da aplicação.
-
-## 1. Download de software:
-
-A aplicação foi escrita na linguagem [R](https://www.r-project.org/) e utilizando as seguintes bibliotecas para a criação do dashboard:
-
-- shiny;
-- shinydashboard;
-- shinydashboardPlus;
-- shinyWidgets;
-- data.table;
-- tidyverse;
-- lubridate;
-- leaflet;	
-- arrow;
-- fresh;
-- DT;
-- sf;
-- rgdal;
-- raster;
-- geojsonsf;
-- waiter;
-
-Após a instalação do R e das bibliotecas listadas anteriormente, o próximo é obter os arquivos da aplicação.
-
-## 2. Clonando repositório remoto: 
-
-É possível realizar o download dos arquivos da aplicação através do repositório remoto do GitHub. Através da linha de commando:
+The app directory are organized according to the following structure:
 
 ```sh
-git clone <url>
+├── app.R
+├── /data
+├── DESCRIPTION
+├── /R
+├── README.md
+├── /tests
+└── /www
 ```
 
-## 3. Executando a aplicação:
+The `/R` folder contains modules and scripts with utility functions, `/data` contains the datasets used, `/tests` folder contains the unit tests and `/www` have the elements that will be rendered in the web browser. 
 
-Com os bancos de dados no formato apropriado e salvo nas respectivas pastas, basta executar o arquivo `app.R`. Através da linha de comando:
+The application are divided in three modules (`speciesDataset.R`, `mapFrequency.R`, `timeline.R`) and a script with utility functions (`utils.R`). The `app.R` is the main file which puts together all the components and starts the application. 
 
 ```sh
-Rscript app.R
+├── /R
+├──── speciesDataset.R
+├──── mapFrequency.R
+├──── timeline.R
+└──── utils.R
+```
+
+- `speciesDataset.R`: this module is responsible to retrieve the data from the biodiversity data and return the filtered dataset to the other modules in the application. 
+- `mapFrequency.R`: this module contains to plot the map in order to visualize the selected species; 
+- `timeline.R`: this module aimes to plot the timeline of the observations of the species through time. 
+- `utils.R`: This is a script which contain all the non-reactive code bundled in functions to be used in the application. 
+
+The `/test`directory, contains a **unit test** for the main function from my `utils.R` script, called `getSpecies`. This function is the workhorse of the application since it is responsible to query the data from the datasource parque file. In order to create and run the unit test, I use the [testthat package](https://testthat.r-lib.org/). 
+
+```sh
+├── /tests
+├──── /testthat
+├──────── test-getSpeciesData.R
+└──── testthat.R
 ```
 
 
-## Autores <a name="autores"></a>
+The application can be found deployed at **shinyapps.io** in this [link](https://cleytonfarias.shinyapps.io/AppsilonCodeChallenge/).
+
+
+### Extras
+
+#### UI
+
+The application was written using the `bs4dash` library, which is relies on Bootstrap 4 shinydashboard using AdminLTE3. Also, some elements were added to the application to improve the information displayed and the user experience. I make use of the package [`waiter`](https://waiter.john-coene.com/#/) to add a loading screen to the app, as well as I complement the information on the map by creating a popup windows with detail information about each specific observation.
+
+
+#### Performance optimization
+
+In order to provide the option to the user analyze species from all countries in the dataset, I make use of the library called [Apache arrow](https://arrow.apache.org/docs/r/index.html). Using the package, I converted the csv into parquet and create a strategy to query from these files.
+
+The contribution of this strategy was twofold:
+
+1. It reduced significantly the size of the datasets: raw data was about 21GB and parquet files was 5GB. This represents a reduction of 75% in size;
+2. It allows the application to filter data without loading the full dataset into memory.
+
+This strategy allows the application to run using the full dataset.
+
+For the deployed version (shinyapps and GitHub), I only use data from Poland because these plataforms restricts the size of the app.  
+
+In a real production scenario, the ideal solution would be host these files  in a cloud bucket (AWS S3, GCS, and others) and create a connection from the deployed shinyapps.io and these databases. 
+
+
+
+## Author  <a name="author"></a>
 ---
 
 - [Cleyton Farias](mailto:cleytonfarias@outlook.com "e-mail");
 
-- [Rubens Lopes](mailto:lps.rubens@gmail.com "e-mail");
 
-
-## Licença
----

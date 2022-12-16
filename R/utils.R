@@ -65,7 +65,8 @@ plotFreqMap_default = function(dataset) {
             position = "bottomright",
             pal = pal, 
             values = ~N,
-            title = "Frequency of observations",
+            title = "% of all species observations",
+            labFormat = labelFormat( prefix = '', suffix = ''),
             opacity = 1
         )
 }
