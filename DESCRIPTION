@@ -1,0 +1,13 @@
+Package: AppsilonCodeChallenge
+Title: Shiny app that visualizes observed species on the map.
+Version: 0.0.0.9000
+Authors@R: 
+    person("Cleyton", "Farias", , "cleytonfarias@outlook.com", role = c("aut", "cre"))
+Description: A shiny app developed for the Appsilon code challenge that visualizes 
+             selecteded species on the map using data from the 
+             Global Biodiversity Information Facility.
+License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+    license
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
