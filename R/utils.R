@@ -8,14 +8,14 @@ getSpeciesData = function(src, species_nm)  {
         dataset = src %>% 
             select(id, vernacularName, scientificName, eventDate, locality, 
                    individualCount, lifeStage, 
-                   latitudeDecimal, longitudeDecimal) %>% 
+                   latitudeDecimal, longitudeDecimal,  accessURI) %>% 
             collect()
     } else {
         dataset = src %>% 
             filter(vernacularName == species_nm | scientificName == species_nm)  %>% 
             select(id, vernacularName, scientificName, eventDate, locality, 
                    individualCount, lifeStage, 
-                   latitudeDecimal, longitudeDecimal) %>% 
+                   latitudeDecimal, longitudeDecimal, accessURI) %>% 
             collect()
     }
     dataset
@@ -38,7 +38,7 @@ getFreq_byLocation <- function(dataset)  {
     library(dplyr)
     dataset %>% 
         count(id, vernacularName, scientificName, eventDate, locality, individualCount, lifeStage, 
-              latitudeDecimal, longitudeDecimal, sort = T)
+              latitudeDecimal, longitudeDecimal,  accessURI, sort = T)
 }
 
 # Function to plot the map with the frequencies by locality. Default when 
@@ -82,6 +82,8 @@ plotFreqMap = function(dataset) {
             lat = ~latitudeDecimal,
             clusterOptions = markerClusterOptions(),
             popup = ~paste0(
+                ifelse(is.na(accessURI), "", paste0("<center><img src = ", accessURI, "' width='100px' height='100px'></center>")),
+                "<br/>",
                 "<strong>Details</strong>",
                 "<br/>",
                 "<br/>",

@@ -23,7 +23,7 @@ This is a Shiny app which allow users to visualize selected species on the map, 
 ## User's Guide <a name="user-guide"> </a>
 ---
 
-Once the application starts, users visualize informations for all species observed in **Poland**. Specifically, I choose to demonstrate the frequency of observations of all species found in the country, as well as the frequency of these observation through the years. 
+Once the application starts, users visualize informations for all species observed in **Poland**. Specifically, I choose to demonstrate the frequency of observations of all species found in the country, as well as the frequency of these observation through the years. If the user click on the markers in the map, he will be able to see the locality, as well as the frequency of observation at that locality.
 
 ![Figure 2: ](www/screen1.png)
 
@@ -103,7 +103,7 @@ The application can be found deployed at **shinyapps.io** in this [link](https:/
 
 #### UI
 
-The application was written using the `bs4dash` library, which is relies on Bootstrap 4 shinydashboard using AdminLTE3. Also, some elements were added to the application to improve the information displayed and the user experience. I make use of the package [`waiter`](https://waiter.john-coene.com/#/) to add a loading screen to the app, as well as I complement the information on the map by creating a popup windows with detail information about each specific observation.
+The application was written using the `bs4dash` library, which is relies on Bootstrap 4 shinydashboard using AdminLTE3. Also, some elements were added to the application to improve the information displayed and the user experience. I make use of the package [`waiter`](https://waiter.john-coene.com/#/) to add a loading screen to the app, as well as I complement the information on the map by creating a popup window with detail information about each specific observation, as well as its photo.
 
 
 #### Performance optimization

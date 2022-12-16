@@ -22,7 +22,7 @@ test_that("getSpeciesData returns data for the selected species", {
             id, vernacularName, scientificName, 
             eventDate, locality, 
             individualCount, lifeStage, 
-            latitudeDecimal, longitudeDecimal
+            latitudeDecimal, longitudeDecimal, accessURI
         ) %>% 
         arrange(id)
     ## selected species:
@@ -32,7 +32,7 @@ test_that("getSpeciesData returns data for the selected species", {
             id, vernacularName, scientificName, 
             eventDate, locality, 
             individualCount, lifeStage, 
-            latitudeDecimal, longitudeDecimal
+            latitudeDecimal, longitudeDecimal, accessURI
         ) %>% 
         collect() %>% 
         arrange(id)
