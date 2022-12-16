@@ -1,29 +1,73 @@
 
 # Function to query the observations for the selected species in a country:
-getSpeciesData = function(src, country_nm, vernacular_nm, scientific_nm)  {
+getSpeciesData = function(src, species_nm)  {
     library(arrow)
     library(dplyr)
-    # If "vernacular_nm" and "scientific_nm" are not set, take all species
-    # from "country_nm":
-    if ( (vernacular_nm == "" & scientific_nm == "")  ) {
-        dataset = open_dataset(src) %>% 
-            filter(country == country_nm)  %>%
+    # If species_nm are not set, take all species:
+    if ( species_nm == "" ) {
+        dataset = src %>% 
+            select(id, vernacularName, scientificName, eventDate, locality, 
+                   individualCount, lifeStage, 
+                   latitudeDecimal, longitudeDecimal) %>% 
             collect()
     } else {
-        dataset = open_dataset(src) %>% 
-            filter(country == country_nm & vernacularName == vernacular_nm & scientificName == scientific_nm)  %>%
+        dataset = src %>% 
+            filter(vernacularName == species_nm | scientificName == species_nm)  %>% 
+            select(id, vernacularName, scientificName, eventDate, locality, 
+                   individualCount, lifeStage, 
+                   latitudeDecimal, longitudeDecimal) %>% 
             collect()
     }
     dataset
 }
 
-# Function to calculate the frequency by location 
+# Function to calculate the frequency by location (locality)
+# given the result from getSpecies(). Default when species not specified:
+getFreq_byLocation_default <- function(dataset)  {
+    library(data.table)
+    setDT(dataset)
+    dataset[, .(lat = mean(latitudeDecimal), 
+                lng = mean(longitudeDecimal),
+                N = n_distinct(id)),
+            locality]
+}
+
+# Function to calculate the frequency by location (latitude, longitude)
 # given the result from getSpecies():
 getFreq_byLocation <- function(dataset)  {
     library(dplyr)
     dataset %>% 
         count(id, vernacularName, scientificName, eventDate, locality, individualCount, lifeStage, 
               latitudeDecimal, longitudeDecimal, sort = T)
+}
+
+# Function to plot the map with the frequencies by locality. Default when 
+# species not specified:
+plotFreqMap_default = function(dataset) {
+    library(leaflet)
+    # pallete:
+    pal <- colorQuantile(palette = "Reds", domain = dataset$N, n = 3)
+    # plot map:
+    leaflet(dataset) %>% 
+        addTiles() %>% 
+        addCircleMarkers(
+            lat = ~lat,
+            lng = ~lng, 
+            color = ~pal(N),  
+            stroke = FALSE, fillOpacity = 0.5,
+            popup = ~paste0(
+                "<strong>Locality: </strong>", locality,
+                "<br>",
+                "<strong>Frequency: </strong>", N
+                ),
+            ) %>% 
+        addLegend(
+            position = "bottomright",
+            pal = pal, 
+            values = ~N,
+            title = "Frequency of observations",
+            opacity = 1
+        )
 }
 
 # Function to plot the map with the frequencies by location:
@@ -58,7 +102,7 @@ plotFreqMap = function(dataset) {
 # Function to plot the timeline of observations of the selected species.
 # This function plots at least 'minYears' of data.
 # Also, it can plot using two libraries: 'highchart' and 'ggplot':
-plotTimeline <- function(dataset, vernacular_nm, scientific_nm, 
+plotTimeline <- function(dataset, species_nm,
                          minYears = 5, type = "highchart") {
     # required packages:
     library(ggplot2)
@@ -94,17 +138,13 @@ plotTimeline <- function(dataset, vernacular_nm, scientific_nm,
                year = as.integer(year))
     
     # plotting:
-    ## title:
-    if (vernacular_nm == "" & scientific_nm == "") {
-        myTitle = "<b>When were all the species observed?</b>"
-    } else {
-        myTitle = paste0("<b>When was the ", scientific_nm, " observed?</b>")
-    }
-    ## subtitle:
-    if (vernacular_nm == "" & scientific_nm == "") {
+    ## title an subtitle:
+    if (species_nm == "") {
+        myTitle = "When were all the species observed?"
         mySubtitle = "Frequency of observations of all species."
     } else {
-        mySubtitle = paste0("Frequency of observations of the ", scientific_nm, " species.")
+        myTitle = paste0("When was the ", species_nm, " observed?")
+        mySubtitle = paste0("Frequency of observations of the ", species_nm, " species.")
     }
     
     if (type == "highchart") {
@@ -112,7 +152,7 @@ plotTimeline <- function(dataset, vernacular_nm, scientific_nm,
         hchart(res, type = "line", hcaes(x = year, y = n)) %>% 
             # Title
             hc_title(
-                text = myTitle,
+                text = paste0("<b>",myTitle,"</b>"),
                 useHTML = T
             ) %>% 
             # Subtitle
@@ -149,11 +189,11 @@ plotTimeline <- function(dataset, vernacular_nm, scientific_nm,
             geom_point() + 
             geom_line(size = .2) +
             theme_minimal() +
-            theme(plot.title = element_text(hjust = .5)) + 
             labs(
                 y = "Number of observations", 
                 x = "Year",
-                title = "Observations Through Time"
+                title = myTitle,
+                subtitle = mySubtitle
             )
     }
 

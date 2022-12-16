@@ -8,9 +8,10 @@ mapFrequencyUI = function(id) {
     )
 }
 
-mapFrequencyServer <- function(id, dataset) {
+mapFrequencyServer <- function(id, dataset, species_nm) {
     # stop execution if not reactive
     stopifnot(is.reactive(dataset))
+    stopifnot(is.reactive(species_nm))
 
     moduleServer(
         id,
@@ -19,8 +20,13 @@ mapFrequencyServer <- function(id, dataset) {
             renderLeaflet({
                 # require nrow > 0:
                 req(nrow(dataset()) > 0)
-                getFreq_byLocation(dataset()) %>% 
-                    plotFreqMap()
+                if ( species_nm() == "" ) {
+                    getFreq_byLocation_default(dataset()) %>% 
+                        plotFreqMap_default()
+                } else {
+                    getFreq_byLocation(dataset()) %>% 
+                        plotFreqMap()
+                }
             })
         }
     )
@@ -45,7 +51,11 @@ mapFrequencyApp <- function() {
     # Server
     server = function(input, output, session) {
         out = speciesDatasetServer("id1")
-        mapFrequencyServer("id2", dataset = out$dataset)
+        mapFrequencyServer(
+            id = "id2", 
+            dataset = out$dataset, 
+            species_nm = out$species_nm
+        )
     }
     
     shinyApp(ui, server)

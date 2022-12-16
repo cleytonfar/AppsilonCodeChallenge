@@ -68,14 +68,16 @@ server = function(input, output, session){
     timelineServer(
         id = "timelinePlt", 
         dataset = out$dataset,
-        vernacular_nm = out$vernacular_nm,
-        scientific_nm = out$scientific_nm
+        species_nm = out$species_nm
     )
     # map:
     mapFrequencyServer(
         id = "mapPlt", 
-        dataset = out$dataset
+        dataset = out$dataset, 
+        species_nm = out$species_nm
     )
 }
 
+
 shinyApp(ui, server)
+

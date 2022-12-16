@@ -10,12 +10,11 @@ timelineUI <- function(id) {
     )
 }
 
-timelineServer = function(id, dataset, vernacular_nm, scientific_nm,
+timelineServer = function(id, dataset, species_nm,
                           minYears = 5, type = "highchart") {
     # stop execution if not reactive
     stopifnot(is.reactive(dataset))
-    stopifnot(is.reactive(vernacular_nm))
-    stopifnot(is.reactive(scientific_nm))
+    stopifnot(is.reactive(species_nm))
     
     moduleServer(
         id,
@@ -25,11 +24,10 @@ timelineServer = function(id, dataset, vernacular_nm, scientific_nm,
                 req( nrow(dataset()) > 0 )
                 plotTimeline(
                     dataset = dataset(),
-                    vernacular_nm = vernacular_nm(),
-                    scientific_nm = scientific_nm()
+                    species_nm = species_nm(),
+                    type = type
                 )
             })
-            
         }
     )
 }
@@ -58,8 +56,7 @@ if ( interactive() ) {
             timelineServer(
                 id = "id2", 
                 dataset = out$dataset, 
-                vernacular_nm = out$vernacular_nm,
-                scientific_nm = out$scientific_nm
+                species_nm = out$species_nm
             )
         }
         
